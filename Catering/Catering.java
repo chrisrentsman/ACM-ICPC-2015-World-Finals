@@ -4,14 +4,15 @@ import java.util.Arrays;
 
 public class Catering {
     private static int INFINITY = Integer.MAX_VALUE;
-    private static int M = 1000001;
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         while (in.hasNextInt()) {
             int n = in.nextInt();
             int k = in.nextInt();
-            int numNodes = (2 * (n + k)) + 2;
+            int numNodes = 1 + k + (2 * n);
+            int leftStart = 1;
+            int rightStart = k + n;
             int[][] g = new int[numNodes][numNodes];
 
             for (int i = 0; i < g.length; i++) {
@@ -23,41 +24,40 @@ public class Catering {
                 teamValues[i] = in.nextInt();
             }
 
-            for (int u = 1; u < k + 1; u++) {
+            for (int u = leftStart; u <= k ; u++) {
                 for (int i = 0; i < n; i++) {
-                    g[u][i + n + (2 * k) + 1] = teamValues[i];
+                    g[u][k + n + i] = teamValues[i];
                 }
             }
 
-            for (int u = 1; u < n; u++) {
-                for (int v = (n + 2 * k + u + 1); v < numNodes - 1; v++) {
-                    g[u + k][v] = in.nextInt();
+            for (int u = leftStart + k; u < rightStart; u++) {
+                for (int v = u + n; v < numNodes - 1; v++) {
+                    g[u][v] = in.nextInt();
                 }
             }
 
-            for (int i = 1; i < n + k + 1; i++) {
+            for (int i = leftStart; i < rightStart; i++) {
                 g[0][i] = 0;
             }
 
-            for (int i = n + k + 1; i < numNodes - 1; i++) {
+            for (int i = rightStart; i < numNodes - 1; i++) {
                 g[i][numNodes - 1] = 0;
             }
 
-            System.out.println(getMinCostMatching(g));
+            System.out.println(getMinCostMatching(g, n, k));
         }
     }
 
-    public static int getMinCostMatching(int[][] g) {
+    public static int getMinCostMatching(int[][] g, int requests, int numTeams) {
         int[][] gMatch = copy2DArray(g);
         int numNodes = gMatch.length;
         int[] p = new int[numNodes];
         int source = 0;
         int sink = g.length - 1;
         int leftStart = 1;
-        int reqMatches = (numNodes - 2) / 2;
-        int rightStart = reqMatches + 1;
+        int rightStart = numTeams + requests;
 
-        while (true) {
+        for (int numMatches = 0; numMatches < requests; numMatches++) {
             int[] distTo = new int[numNodes];
             int[] parent = new int[numNodes];
             boolean[] visited = new boolean[numNodes];
@@ -83,8 +83,6 @@ public class Catering {
                     }
                 }
             }
-
-            if (distTo[sink] == INFINITY) break;
 
             int current = sink;
             while (current != source) {
@@ -112,14 +110,13 @@ public class Catering {
                     }
                 }
             }
-
         }
 
         int minCost = 0;
-        for (int i = leftStart; i < rightStart; i++) {
-            for (int j = 0; j < numNodes; j++) {
-                if (g[i][j] != INFINITY && gMatch[j][i] != INFINITY) {
-                    minCost += g[i][j];
+        for (int u = leftStart; u < rightStart; u++) {
+            for (int v = 0; v < numNodes; v++) {
+                if (g[u][v] != INFINITY && gMatch[v][u] != INFINITY) {
+                    minCost += g[u][v];
                 }
             }
         }
@@ -137,9 +134,7 @@ public class Catering {
         }
 
         public int compareTo(Node that) {
-            if (this.cost < that.cost) return -1;
-            else if (this.cost > that.cost) return 1;
-            else return 0;
+            return this.cost - that.cost;
         }
     }
 
