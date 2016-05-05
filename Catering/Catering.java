@@ -1,4 +1,3 @@
-import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.Arrays;
 
@@ -19,50 +18,63 @@ public class Catering {
      */
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-
         while (in.hasNextInt()) {
             int n = in.nextInt();
             int k = in.nextInt();
-            int numNodes = 1 + k + (2 * n);
-            int leftStart = 1;
-            int rightStart = k + n;
-            int[][] g = new int[numNodes][numNodes];
-
-            // initializes adjacency matrix
-            for (int i = 0; i < g.length; i++) {
-                Arrays.fill(g[i], INFINITY);
-            }
-
-            // builds up edges from location 1, per team
-            int[] teamValues = new int[n];
-            for (int i = 0; i < teamValues.length; i++) {
-                teamValues[i] = in.nextInt();
-            }
-
-            for (int u = leftStart; u <= k ; u++) {
-                for (int i = 0; i < n; i++) {
-                    g[u][k + n + i] = teamValues[i];
-                }
-            }
-
-            // builds up costs from location u to location v
-            for (int u = leftStart + k; u < rightStart; u++) {
-                for (int v = u + n; v < numNodes - 1; v++) {
-                    g[u][v] = in.nextInt();
-                }
-            }
-
-            // connects source and sink to the rest of the graph
-            for (int i = leftStart; i < rightStart; i++) {
-                g[0][i] = 0;
-            }
-
-            for (int i = rightStart; i < numNodes - 1; i++) {
-                g[i][numNodes - 1] = 0;
-            }
-
-            System.out.println(getMinCostMatching(g, n, k));
+            int[][] g = buildGraphFromInput(in, n, k);
+            int minCost = getMinCostMatching(g, n, k);
+            System.out.println(minCost);
         }
+    }
+
+    /**
+     * Builds up a graph from input for the Catering problem. For input
+     * specifics, check the README for more information.
+     * @param   Scanner in: The input stream.
+     * @param   int n: The number of requests.
+     * @param   int k: The number of teams.
+     * @return  int[][]: The adjacency matrix.
+     */
+    private static int[][] buildGraphFromInput(Scanner in, int n, int k) {
+        int numNodes = 1 + k + (2 * n);
+        int leftStart = 1;
+        int rightStart = k + n;
+        int[][] g = new int[numNodes][numNodes];
+
+        // initializes adjacency matrix
+        for (int i = 0; i < g.length; i++) {
+            Arrays.fill(g[i], INFINITY);
+        }
+
+        // builds up edges from location 1, per team
+        int[] teamValues = new int[n];
+        for (int i = 0; i < teamValues.length; i++) {
+            teamValues[i] = in.nextInt();
+        }
+
+        for (int u = leftStart; u <= k ; u++) {
+            for (int i = 0; i < n; i++) {
+                g[u][k + n + i] = teamValues[i];
+            }
+        }
+
+        // builds up costs from location u to location v
+        for (int u = leftStart + k; u < rightStart; u++) {
+            for (int v = u + n; v < numNodes - 1; v++) {
+                g[u][v] = in.nextInt();
+            }
+        }
+
+        // connects source and sink to the rest of the graph
+        for (int i = leftStart; i < rightStart; i++) {
+            g[0][i] = 0;
+        }
+
+        for (int i = rightStart; i < numNodes - 1; i++) {
+            g[i][numNodes - 1] = 0;
+        }
+
+        return g;
     }
 
     /**

@@ -1,1 +1,7 @@
 *.class
+*.log
+*.aux
+*.fdb_latexmk
+*.fls
+*.report.fls
+*.synctex.gz
