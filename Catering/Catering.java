@@ -35,12 +35,6 @@ public class Catering {
                 }
             }
 
-            for (int u = 1; u < n + k + 1; u++) {
-                for (int v = n + k + 1; v < numNodes - 1; v++) {
-                    if (g[u][v] == INFINITY) g[u][v] = M;
-                }
-            }
-
             for (int i = 1; i < n + k + 1; i++) {
                 g[0][i] = 0;
             }
@@ -49,7 +43,7 @@ public class Catering {
                 g[i][numNodes - 1] = 0;
             }
 
-            System.out.println(getMinCostMatching(g) - M * K);
+            System.out.println(getMinCostMatching(g));
         }
     }
 
