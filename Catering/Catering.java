@@ -7,6 +7,7 @@ public class Catering {
 
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
+
         while (in.hasNextInt()) {
             int n = in.nextInt();
             int k = in.nextInt();
@@ -210,19 +211,5 @@ public class Catering {
 
         return b;
     }
-
-    private static void printArray(int[] a) {
-        for (int i = 0; i < a.length; i++) {
-            System.out.print(a[i] + " ");
-        }
-        System.out.println();
-    }
-
-    private static void printArray(int[][] a) {
-        for (int i = 0; i < a.length; i++) {
-            printArray(a[i]);
-        }
-    }
-
 
 }
