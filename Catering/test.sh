@@ -7,4 +7,5 @@ for file in ../testCases/catering/*.in; do
     java Catering < ${file} > ../testCases/catering/${fname}.out
     diff ../testCases/catering/${fname}.out ../testCases/catering/${fname}.ans
 done
+rm ../testCases/catering/*.out
 echo "Done."
