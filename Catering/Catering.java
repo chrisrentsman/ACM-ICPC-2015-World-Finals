@@ -60,26 +60,23 @@ public class Catering {
         for (int numMatches = 0; numMatches < requests; numMatches++) {
             int[] distTo = new int[numNodes];
             int[] parent = new int[numNodes];
-            boolean[] visited = new boolean[numNodes];
-            PriorityQueue<Node> pq = new PriorityQueue<Node>(numNodes);
+            IndexMinPQ<Integer> pq = new IndexMinPQ<Integer>(numNodes);
             for (int i = 0; i < distTo.length; i++) {
                 distTo[i] = INFINITY;
             }
 
             distTo[source] = 0;
-            pq.add(new Node(source, 0));
+            pq.insert(source, distTo[source]);
             while (!pq.isEmpty()) {
-                int u = pq.remove().vertex;
-                visited[u] = true;
+                int u = pq.delMin();
                 for (int v = 0; v < numNodes; v++) {
-                    if (!visited[v] && gMatch[u][v] != INFINITY) {
-                        int currentDist = gMatch[u][v];
-                        int newDistance = distTo[u] + currentDist;
-                        if (distTo[v] >= newDistance) {
-                            distTo[v] = Math.min(distTo[v], newDistance);
+                    if (gMatch[u][v] != INFINITY) {
+                        if (distTo[v] > distTo[u] + gMatch[u][v]) {
+                            distTo[v] = distTo[u] + gMatch[u][v];
                             parent[v] = u;
+                            if (pq.contains(v)) pq.decreaseKey(v, distTo[v]);
+                            else pq.insert(v, distTo[v]);
                         }
-                        pq.add(new Node(v, distTo[v]));
                     }
                 }
             }
@@ -124,19 +121,84 @@ public class Catering {
         return minCost;
     }
 
-    private static class Node implements Comparable<Node> {
-        public int vertex;
-        public int cost;
+    // courtesy of princeton
+    private static class IndexMinPQ<Key extends Comparable<Key>> {
+        private int maxN;
+        private int N;
+        private int[] pq;
+        private int[] qp;
+        private Key[] keys;
 
-        public Node(int v, int c) {
-            this.vertex = v;
-            this.cost = c;
+        public IndexMinPQ(int maxN) {
+            this.maxN = maxN;
+            keys = (Key[]) new Comparable[maxN + 1];
+            pq   = new int[maxN + 1];
+            qp   = new int[maxN + 1];
+            for (int i = 0; i <= maxN; i++)
+                qp[i] = -1;
         }
 
-        public int compareTo(Node that) {
-            return this.cost - that.cost;
+        public boolean isEmpty() {
+            return N == 0;
+        }
+
+        public boolean contains(int i) {
+            return qp[i] != -1;
+        }
+
+        public void insert(int i, Key key) {
+            N++;
+            qp[i] = N;
+            pq[N] = i;
+            keys[i] = key;
+            swim(N);
+        }
+
+        public int delMin() {
+            int min = pq[1];
+            exch(1, N--);
+            sink(1);
+            qp[min] = -1;
+            keys[min] = null;
+            pq[N+1] = -1;
+            return min;
+        }
+
+        public void decreaseKey(int i, Key key) {
+            keys[i] = key;
+            swim(qp[i]);
+        }
+
+        private boolean greater(int i, int j) {
+            return keys[pq[i]].compareTo(keys[pq[j]]) > 0;
+        }
+
+        private void exch(int i, int j) {
+            int swap = pq[i];
+            pq[i] = pq[j];
+            pq[j] = swap;
+            qp[pq[i]] = i;
+            qp[pq[j]] = j;
+        }
+
+        private void swim(int k) {
+            while (k > 1 && greater(k/2, k)) {
+                exch(k, k/2);
+                k = k/2;
+            }
+        }
+
+        private void sink(int k) {
+            while (2*k <= N) {
+                int j = 2*k;
+                if (j < N && greater(j, j+1)) j++;
+                if (!greater(k, j)) break;
+                exch(k, j);
+                k = j;
+            }
         }
     }
+
 
     private static int[][] copy2DArray(int[][] a) {
         int[][] b = new int[a.length][a.length];
