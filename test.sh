@@ -8,7 +8,7 @@ javac ./${arg}/${arg}.java -d .
 for file in ./testCases/${lc}/*.in; do
     fname="$(basename ${file%.*})"
     echo ${fname}
-    java Catering < ${file} > ./testCases/${lc}/${fname}.out
+    java ${arg} < ${file} > ./testCases/${lc}/${fname}.out
     diff ./testCases/${lc}/${fname}.out ./testCases/${lc}/${fname}.ans
 done
 

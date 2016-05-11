@@ -5,3 +5,4 @@
 *.fls
 *.report.fls
 *.synctex.gz
+.latex/*
