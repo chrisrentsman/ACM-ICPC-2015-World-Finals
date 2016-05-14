@@ -4,7 +4,7 @@ import java.util.Arrays;
 /**
  * Catering.java. Solves UVA 1711. Given N requests and K
  * teams, returns the minimum cost of servicing each request
- * in O(K(N^2)log(N+K)).
+ * in O((N^3)log(N+K)).
  *
  * Compilation: javac Catering.java
  * Execution: java Catering < input.txt

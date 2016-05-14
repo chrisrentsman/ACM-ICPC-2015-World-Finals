@@ -1,5 +1,13 @@
 import java.util.Scanner;
 
+/**
+ * Catering.java. Solves UVA 1709. Given N times
+ * to check, finds the maximum decline in prices
+ * in O(N) time.
+ *
+ * Compilation: javac Artichoke.java
+ * Execution: java Artichoke < input.txt
+ */
 public class Artichoke {
 
     public static void main(String[] args) {
